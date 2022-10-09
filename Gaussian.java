@@ -96,7 +96,8 @@ public class Gaussian
 
             // swap the rows with coefficients so that the pivot row
             // will be in an appropriate location.
-            double[] tempArray = cArray[count];
+            double[] tempArray = new double[getNumEquations() - count];
+            tempArray = cArray[count];
             cArray[count] = cArray[pivotRow];
             cArray[pivotRow] = tempArray;
 
@@ -111,15 +112,15 @@ public class Gaussian
             // row has been moved to the appropriate location.
             for (int i = count + 1; i < getNumEquations(); i++)
             {
-                multiplier = getCoefficients(i, count) / getCoefficients(pivotRow, pivotRow);
+                multiplier = getCoefficients(i, count) / getCoefficients(count, count);
 
                 // update the coefficients.
                 for (int j = count; j < getNumEquations(); j++)
                 {
-                    GetCArray()[i][i] -= (multiplier * GetCArray()[pivotRow][j]);
+                    GetCArray()[i][j] -= (multiplier * GetCArray()[count][j]);
                 }
                 // then update the b value.
-                GetBArray()[i] -= (multiplier * getBValues(pivotRow));
+                GetBArray()[i] -= (multiplier * getBValues(count));
 
             }
 
@@ -198,9 +199,9 @@ public class Gaussian
             }
 
             // display the variables.
-            System.out.print(" [x" + (i + 1) + "] ");
+            System.out.print(" [ x" + (i + 1) + " ] ");
             // display the b values.
-            System.out.println("= [" + getBValues(i) + "]");
+            System.out.println("= [ " + getBValues(i) + " ]");
 
         }
 
