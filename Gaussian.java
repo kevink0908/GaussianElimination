@@ -36,7 +36,7 @@ public class Gaussian
         // perform the Gaussian elimination with Scaled Partial Pivoting method.
         System.out.println("\nPerforming Gaussian Elimination with Scaled Partial Pivoting...");
 
-        while (count < getNumEquations())
+        while ((count + 1) < getNumEquations())
         {
             // obtain the scale factor vector.
             for (int i = count; i < getNumEquations(); i++)
@@ -75,11 +75,11 @@ public class Gaussian
             }
 
             // output the scaled ratios at each step.
-            System.out.print("\nThe scaled ratio for step #" + (count + 1) + " is: " );
+            System.out.printf("\nThe scaled ratio for step #" + (count + 1) + " is: " );
             System.out.print("[ ");
             for (int i = 0; i < ratioArray.length; i++)
             {
-                System.out.print(ratioArray[i]);
+                System.out.printf("%.3f", ratioArray[i]);
                 if (i == (ratioArray.length - 1))
                 {
                     System.out.print(" ]");
@@ -126,6 +126,7 @@ public class Gaussian
 
             // show the intermediate matrix at each step
             // of the Gaussian Elimination process.
+            System.out.println("Displaying the intermediate matrix for the current step...");
             PrintMatrix();
 
             count++;
@@ -157,11 +158,6 @@ public class Gaussian
         return array;
     }
 
-    public void PrintScaledRatios()
-    {
-
-    }
-
     // this function displays the final solution.
     public void PrintOutput(double[] array)
     {
@@ -170,7 +166,7 @@ public class Gaussian
         // display the final output of the program.
         for (int i = 1; i <= array.length; i++)
         {
-            System.out.println("x" + i + " = " + array[i - 1]);
+            System.out.println("x" + i + " = " + Math.round(array[i - 1]));
         }
     }
 
@@ -178,15 +174,13 @@ public class Gaussian
     // at each step of the Gaussian Elimination process.
     public void PrintMatrix()
     {
-        System.out.println("Displaying the intermediate matrix for the current step...");
-
         for (int i = 0; i < getNumEquations(); i++)
         {
             // display the coefficients.
             System.out.print("[ ");
             for (int j = 0; j < getNumEquations(); j++)
             {
-                System.out.print(getCoefficients(i, j));
+                System.out.printf("%.3f ", getCoefficients(i, j));
 
                 if (j == (getNumEquations() - 1))
                 {
@@ -199,9 +193,9 @@ public class Gaussian
             }
 
             // display the variables.
-            System.out.print(" [ x" + (i + 1) + " ] ");
+            System.out.printf(" [ x" + (i + 1) + " ] ");
             // display the b values.
-            System.out.println("= [ " + getBValues(i) + " ]");
+            System.out.printf("= [ %.3f ]\n", getBValues(i));
 
         }
 

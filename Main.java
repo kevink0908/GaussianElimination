@@ -85,12 +85,16 @@ public class Main
                 System.exit(0);
             }
         }
-        // otherwise, terminate the program as the user input was neither 1 or 2
+        // otherwise, terminate the program as the user input was neither 1 nor 2
         // and there was a corruption in the program.
         else
         {
             System.exit(0);
         }
+
+        // display the original matrix.
+        System.out.println("\nDisplaying the original Matrix:");
+        equations.PrintMatrix();
 
         // perform Gaussian Elimination with Scaled Partial Pivoting method.
         equations.PerformGaussianElimination(equations.GetCArray(), equations.GetBArray());
