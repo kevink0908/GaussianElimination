@@ -1,156 +1,236 @@
-import java.util.Scanner;
 import java.lang.Math;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.FileWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 
-public class Gaussian()
+public class Gaussian
 {
-    private int numCoefficients;
+    private int numEquations;
     private double[][] cArray;
     private double[] bArray;
+    private double[] scaleFactorVectorArray;
+    private double[] ratioArray;
+    private double[] resultArray;
 
-    // this is the default constructor.
+    // this is the type constructor.
     public Gaussian(int n)
     {
-        numCoefficients = n;
+        numEquations = n;
         cArray = new double[n][n];
         bArray = new double[n];
+        scaleFactorVectorArray = new double[n];
+        ratioArray = new double[n];
+        resultArray = new double[n];
+
     } // end of default CTOR.
 
-    // this function will prompt the user to enter the coefficients
-    // and the b value at the command line for each row in order to perform
-    // the Gaussian elimination with Scaled Partial Pivoting method.
-    public void PerformGaussianElimination(int numCoefficients)
+    // this method performs the Gaussian elimination with
+    // Scaled Partial Pivoting method.
+    public void PerformGaussianElimination(double[][] cArray, double[] bArray)
     {
-        int firstIndex = 0;
-        int maxVal = 0;
-        double userInt;
+        int count = 0;
+        int pivotRow = 0;
+        double maxVal = 0.0;
+        double firstNum = 0.0;
+        double maxRatio = 0.0;
+        double ratio = 0.0;
         double multiplier = 0.0;
-        double[][] cArray = new double[numCoefficients][numCoefficients];
-        double[] bArray = new double[numCoefficients];
-        double[] resultArray = new double[numCoefficients];
-        Scanner keyboard = new Scanner(System.in);
 
-        for (int i = 1; i <= numCoefficients; i++)
+        // perform the Gaussian elimination with Scaled Partial Pivoting method.
+        System.out.println("\nPerforming Gaussian Elimination with Scaled Partial Pivoting...");
+
+        while (count < getNumEquations())
         {
-            System.out.println("\nInputting the coefficients for Row #" + i + "...");
-
-            for (int j = 1; j <= numCoefficients; j++)
+            // obtain the scale factor vector.
+            for (int i = count; i < getNumEquations(); i++)
             {
-                // prompt the user to enter the coefficients.
-                do {
-                    System.out.print("\nPlease enter the coefficient for x" + i + ": ");
-
-                    if (keyboard.hasNextDouble())
+                for (int j = count; j < getNumEquations(); j++)
+                {
+                    // check to see if the coefficient is the first value.
+                    if (j == count)
                     {
-                        userInt = keyboard.nextDouble();
-                        this.setCoefficients((i - 1), (j - 1), userInt);
+                        firstNum = getCoefficients(i, j);
+                        maxVal = Math.abs(getCoefficients(i, j));
                     }
-                    else
+                    // check to see if we need to update the maxVal.
+                    else if (maxVal < getCoefficients(i, j))
                     {
-                        System.out.println("\nPlease enter a valid value...");
+                        // if so, update the max value.
+                        maxVal = Math.abs(getCoefficients(i, j));
                     }
-                } while (keyboard.hasNextDouble());
+                    scaleFactorVectorArray[i] = maxVal;
+                    ratio = Math.abs(firstNum) / maxVal;
+                }
 
+                // save the scaled ratio.
+                ratioArray[i] = ratio;
+
+                // check to see if the current row is the first row
+                // or if the max ratio is less than the current ratio.
+                if (count == 0 || maxRatio < ratio)
+                {
+                    // if so, update the max ratio.
+                    maxRatio = ratio;
+                    // also update the pivot row because the row
+                    // with the largest ratio will be the pivot row.
+                    pivotRow = i;
+                }
             }
-        }
-
-        // prompt the user to enter the coefficients for each row.
-        for (int i = 1; i <= numCoefficients; i++)
-        {
-            System.out.println("\nInputting the coefficients for Row #" + i + "...");
-
-            System.out.println("\nPlease enter the coefficient for x: ");
-            xVal = keyboard.nextInt();
-            // clear the buffer.
-            keyboard.nextLine();
-            maxVal = Math.abs(xVal);
-            firstIndex = xVal;
-
-            System.out.println("\nPlease enter the coefficient for y: ");
-            yVal = keyboard.nextInt();
-            // clear the buffer.
-            keyboard.nextLine();
-
-            // check to see if the y-value is the largest.
-            if (Math.abs(yVal) > maxVal)
-            {
-                // if so, update the max value.
-                maxVal = Math.abs(yVal);
-            }
-            // also, check to see if the y-value is the first index.
-            if (xVal == 0)
-            {
-                // if so, then y-value will be the first index.
-                firstIndex = yVal;
-            }
-
-            System.out.println("\nPlease enter the coefficient for z: ");
-            zVal = keyboard.nextInt();
-            // clear the buffer.
-            keyboard.nextLine();
-
-            // check to see if the z-value is the largest.
-            if (Math.abs(zVal) > maxVal)
-            {
-                // if so, update the max value.
-                maxVal = Math.abs(zVal);
-            }
-            // also, check to see if the z-value is the first index.
-            if ((xVal == 0) && (yVal == 0))
-            {
-                // if so, then z-value will be the first index.
-                firstIndex = zVal;
-            }
-
-            System.out.println("\nPlease enter the coefficient for b: ");
-            bVal = keyboard.nextInt();
-            // clear the buffer.
-            keyboard.nextLine();
 
             // output the scaled ratios at each step.
-            System.out.print("\nThe scaled ratio for this row is: ");
-            System.out.println(GetRatio(firstIndex, maxVal));
-
-            // determine the multiplier for the current step.
-            if (GetRatio(firstIndex, maxVal) >= 0.0)
+            System.out.print("\nThe scaled ratio for step #" + (count + 1) + " is: " );
+            System.out.print("[ ");
+            for (int i = 0; i < ratioArray.length; i++)
             {
-                multiplier = GetRatio(firstIndex, maxVal;
+                System.out.print(ratioArray[i]);
+                if (i == (ratioArray.length - 1))
+                {
+                    System.out.print(" ]");
+                }
+                else
+                {
+                    System.out.print(", ");
+                }
             }
 
             // mention the pivot row selected based on the scaled ratio.
-            for (int i = 0; i < ; i++)
+            System.out.print("\nRow #" + (pivotRow + 1) + " was selected as the pivot");
+            System.out.println(" row because this row had the largest ratio.\n");
+
+            // swap the rows with coefficients so that the pivot row
+            // will be in an appropriate location.
+            double[] tempArray = cArray[count];
+            cArray[count] = cArray[pivotRow];
+            cArray[pivotRow] = tempArray;
+
+            // also swap the b values for the same two rows.
+            double temp = bArray[count];
+            bArray[count] = bArray[pivotRow];
+            bArray[pivotRow] = temp;
+
+            // apply the multiplier to the pivot row and then subtract
+            // the pivot row from the row that was swapped with.
+            // NOTE: we are incrementing 1 to the count because the pivot
+            // row has been moved to the appropriate location.
+            for (int i = count + 1; i < getNumEquations(); i++)
             {
-                // show the intermediate matrix at each step
-                // of the Gaussian Elimination process.
+                multiplier = getCoefficients(i, count) / getCoefficients(pivotRow, pivotRow);
+
+                // update the coefficients.
+                for (int j = count; j < getNumEquations(); j++)
+                {
+                    GetCArray()[i][i] -= (multiplier * GetCArray()[pivotRow][j]);
+                }
+                // then update the b value.
+                GetBArray()[i] -= (multiplier * getBValues(pivotRow));
+
             }
 
-            // display the final output of the program.
+            // show the intermediate matrix at each step
+            // of the Gaussian Elimination process.
+            PrintMatrix();
 
+            count++;
+        }
 
-        } // end of the for loop.
+        // lastly, perform back substitution in order to solve for each variable.
+        SetResultArray(PerformBackSubstitution());
 
     } // end of "PerformGaussianElimination"
 
-    // this function will read the augmented coefficient matrix (including
-    // the b values) in a simple text file format in order to perform the
-    // Gaussian elimination with Scaled Partial Pivoting method.
-    public void PerformGaussianElimination(String fileName, int numCoefficients)
+    // this function performs the back substitution.
+    protected double[] PerformBackSubstitution()
+    {
+        // perform back substitution.
+        double[] array = new double[getNumEquations()];
+
+        for (int i = getNumEquations() - 1; i >= 0; i--)
+        {
+            double sum = 0.0;
+
+            for (int j = i + 1; j < getNumEquations(); j++)
+            {
+                sum += getCoefficients(i, j) * array[j];
+            }
+            array[i] = (getBValues(i) - sum) / getCoefficients(i, i);
+        }
+
+        // return the array that contains the final values for each variable.
+        return array;
+    }
+
+    public void PrintScaledRatios()
     {
 
-    } // end of "PerformGaussianElimination2"
+    }
 
-    public double GetRatio(int firstIndex, int largestNum)
+    // this function displays the final solution.
+    public void PrintOutput(double[] array)
     {
-        return firstIndex / largestNum;
-    } // end of GetRatio.
+        System.out.println("\nDisplaying the final output:");
 
-    public int getNumCoefficients()
+        // display the final output of the program.
+        for (int i = 1; i <= array.length; i++)
+        {
+            System.out.println("x" + i + " = " + array[i - 1]);
+        }
+    }
+
+    // this function is used to display the intermediate matrix
+    // at each step of the Gaussian Elimination process.
+    public void PrintMatrix()
     {
-        return numCoefficients;
+        System.out.println("Displaying the intermediate matrix for the current step...");
+
+        for (int i = 0; i < getNumEquations(); i++)
+        {
+            // display the coefficients.
+            System.out.print("[ ");
+            for (int j = 0; j < getNumEquations(); j++)
+            {
+                System.out.print(getCoefficients(i, j));
+
+                if (j == (getNumEquations() - 1))
+                {
+                    System.out.print(" ]");
+                }
+                else
+                {
+                    System.out.print(", ");
+                }
+            }
+
+            // display the variables.
+            System.out.print(" [x" + (i + 1) + "] ");
+            // display the b values.
+            System.out.println("= [" + getBValues(i) + "]");
+
+        }
+
+    } // end of "PrintMatrix"
+
+    public double[][] GetCArray()
+    {
+        return this.cArray;
+    }
+
+    public double[] GetBArray()
+    {
+        return this.bArray;
+    }
+
+    public void SetResultArray(double[] array)
+    {
+        resultArray = array;
+    }
+
+    // this function returns the base address of the result array
+    // that contains the final values for each variable.
+    public double[] GetResultArray()
+    {
+        return this.resultArray;
+    }
+
+    public int getNumEquations()
+    {
+        return this.numEquations;
     }
 
     public void setCoefficients(int row, int col, double val)
